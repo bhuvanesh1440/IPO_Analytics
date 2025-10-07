@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 // The API endpoint remains the same, using Vite environment variables
 const DEFAULT_API =
-  import.meta?.env?.VITE_API_URL || "https://ipo-analytics-api.onrender.com/operations";
+  import.meta?.env?.VITE_API_URL || "http://localhost:8000/operations";
 
 export default function ReconcileApp() {
   const API_URL = DEFAULT_API;
@@ -19,6 +19,28 @@ export default function ReconcileApp() {
   const PAGE_SIZE = 50;
 
   const statusAppsCacheRef = useRef({});
+
+    //  Warm-up Effect ---
+  useEffect(() => {
+    // The health check URL is the base API URL without the '/operations' path
+    const healthCheckURL = API_URL.replace('/operations', '/');
+    
+    // Use 'fetch' for the simple GET request (it's cleaner than XMLHttpRequest for this)
+    const warmUpBackend = async () => {
+      console.log('Attempting to warm up the backend...');
+      try {
+        await fetch(healthCheckURL, { method: 'GET', mode: 'cors' });
+        console.log('Backend warm-up complete.');
+      } catch (error) {
+        // This is fine, we just want the server to wake up
+        console.error('Backend warm-up failed (expected if backend is asleep):', error);
+      }
+    };
+
+    // Run the warm-up call only once when the component mounts
+    warmUpBackend();
+  }, [API_URL]); // Dependency on API_URL means it runs once the URL is determined
+  
 
   // --- Utility Functions (Same as original) ---
 
