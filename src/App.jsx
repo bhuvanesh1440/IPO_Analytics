@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 // The API endpoint remains the same, using Vite environment variables
 const DEFAULT_API =
-  import.meta?.env?.VITE_API_URL || "http://localhost:8000/operations";
+  import.meta?.env?.VITE_API_URL || "https://ipo-analytics-api.onrender.com/operations";
 
 export default function ReconcileApp() {
   const API_URL = DEFAULT_API;
